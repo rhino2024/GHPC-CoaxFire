@@ -8,6 +8,8 @@ Gunner, HEAT, PC! 的 MelonLoader 模组。按住空格直接打同轴机枪和�
 
 车顶那挺的另一个毛病也一起处理了：它有自己的火控，玩家从来操作不到，默认停在俯角上，一开火就往车边几十米的泥地里打。模组每帧把主炮的指向喂给它的火控，它按自己的转速慢慢追过去——所以是逐渐跟上，猛打方向时会慢半拍。
 
+喂过去的是「主炮这一刻指着哪」这条实时方向，不是主炮火控里存着的一个目标点：后者在没开世界点稳定的车（M1A1 这一类）上是上一发测距留下的旧坐标，车顶枢轴跟着车体转，拿它当方向会越打越偏。写法上也不能直接把方向向量塞给那套火控——它会再乘一遍自己的当前距离，而车顶那挺从没测过距，那个距离是 0，方向会被写成零向量，而那台瞄准镜的机位正是沿这条向量摆的，镜头就此钉死，动不了也回不来。现在改成给一个世界坐标点，方向由游戏自己算；你正从车顶那套火控驱动的镜子里往外看时，模组让路，不去动你正在用的视野。
+
 `F6` 随时开关。
 
 ## 装
@@ -48,6 +50,6 @@ GHPC_DIR="/path/to/Gunner HEAT PC/Bin" bash src/build.sh deploy
 
 ## In English
 
-Hold Space to fire the coaxial and roof machine guns without switching weapons, so the main gun stays aimed where it was. The roof gun has its own fire control that the player never touches and that sits at depression by default, which is why it used to plough the dirt; this mod feeds the main gun's direction to it every frame and lets it traverse at its own rate. `F6` toggles it, and the fire key is rebindable. Also note that Space is the game's own Let Commander Aim by default, so rebind one of the two.
+Hold Space to fire the coaxial and roof machine guns without switching weapons, so the main gun stays aimed where it was. The roof gun has its own fire control that the player never touches and that sits at depression by default, which is why it used to plough the dirt; this mod feeds the main gun's direction to it every frame and lets it traverse at its own rate. The direction comes from where the main gun is looking right now, not from a target point stored in its fire control, which goes stale on vehicles without world-point stabilisation. Version 1.3.0 also stops the roof gun's own optic from freezing: writing a raw direction vector makes that fire control multiply it by its own range, and since the player never ranges with the roof gun that range is zero, which used to leave the sight pointing at nothing and unable to move. 1.3.1 keeps the roof gun on your reticle after you switch back to the main gun. `F6` toggles it, and the fire key is rebindable. Also note that Space is the game's own Let Commander Aim by default, so rebind one of the two.
 
 MIT，与 Radian Simulations 无关。在当前 Steam 版上实测过，游戏更新有可能让它失效。
